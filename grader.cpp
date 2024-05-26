@@ -6,9 +6,10 @@
 #include <csignal>
 #include <iostream>
 #include <stdlib.h>
-#include <sys/resource.h>
+#include <sys/resource.h
 #include <sys/time.h>
 #include <unistd.h>
+#include "../../../../../../../usr/local/Cellar/game-porting-toolkit/1.1/include/wine/msvcrt/process.h"
 
 using namespace std;
 

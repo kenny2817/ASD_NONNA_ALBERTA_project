@@ -2,24 +2,38 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <iostream> // For debugging
 
 #include "nonna.h"
 
 using namespace std;
 
 struct centrino {
-    float mean;
+    float median;
     vector<int> to;
 
-    explicit centrino(float mn = 0) : mean(mn), to({}) {}
+    explicit centrino(float med = 0) : median(med), to({}) {}
 };
 
 vector<centrino> c;
 ofstream out ("output.txt");
 
-// mean
-bool compareByMean(const int &a, const int &b) {
-    return c[a].mean < c[b].mean;
+// Median calculation function
+float calculateMedian(vector<int>& values) {
+    size_t size = values.size();
+    if (size == 0) return 0; // If there are no elements, return 0
+    sort(values.begin(), values.end()); // Sort the values
+
+    if (size % 2 == 0) {
+        return (values[size / 2 - 1] + values[size / 2]) / 2.0;
+    } else {
+        return values[size / 2];
+    }
+}
+
+// Median comparison function
+bool compareByMedian(const int &a, const int &b) {
+    return c[a].median < c[b].median;
 }
 
 // O (log(G))
@@ -78,22 +92,20 @@ int main() {
         // normalize
         tempB -= C;
         c[tempA].to.push_back(tempB);
-        c[tempA].mean += (float)tempB;
     }
 
     for (int i = 0; i < C; ++i) {
         order[i] = i;
 
-        c[i].mean /= (float) c[i].to.size();
-        sort(c[i].to.begin(), c[i].to.end());
+        c[i].median = calculateMedian(c[i].to);
     }
 
     //start
     int minSoFar = count(order, G);
     printout(minSoFar, order);
 
-    // mean heuristic
-    sort(order.begin(), order.end(), compareByMean);
+    // median heuristic
+    sort(order.begin(), order.end(), compareByMedian);
 
     int actual = count(order, G);
     if (minSoFar > actual) {
