@@ -1,12 +1,9 @@
-//
-// Created by quent on 26/05/2024.
-//
-
 #include <fstream>
-#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <random>
+
+#include "nonna.h"
 
 using namespace std;
 
@@ -24,13 +21,8 @@ ofstream out ("output.txt");
 bool compareByMean(const int &a, const int &b) {
     return c[a].mean < c[b].mean;
 }
-void meanOperation (vector<int>& order) {
-    for (auto& i : c)
-        i.mean /= i.to.size();
 
-    sort(order.begin(), order.end(), compareByMean);
-}
-
+// O (log(G))
 int arbreMagique (int* ftree, int index, int G) {
     // sum
     int sum = 0;
@@ -54,6 +46,9 @@ int count(const vector<int>& order, const int G) {
         for (const int j : c[i].to)
             // O (log(G))
             crossings += arbreMagique(ftree, j, G);
+
+    // Deallocate the memory
+    delete[] ftree;
 
     return crossings;
 }
@@ -83,11 +78,13 @@ int main() {
         // normalize
         tempB -= C;
         c[tempA].to.push_back(tempB);
-        c[tempA].mean += tempB;
+        c[tempA].mean += (float)tempB;
     }
 
     for (int i = 0; i < C; ++i) {
         order[i] = i;
+
+        c[i].mean /= (float) c[i].to.size();
         sort(c[i].to.begin(), c[i].to.end());
     }
 
@@ -96,7 +93,8 @@ int main() {
     printout(minSoFar, order);
 
     // mean heuristic
-    meanOperation(order);
+    sort(order.begin(), order.end(), compareByMean);
+
     int actual = count(order, G);
     if (minSoFar > actual) {
         minSoFar = actual;
@@ -129,6 +127,4 @@ int main() {
 
         swap(order[a], order[b]);
     }
-
-    return 0;
 }
