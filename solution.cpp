@@ -1,22 +1,30 @@
+//
+// Created by quent on 26/05/2024.
+//
 #include <fstream>
 #include <vector>
 #include <algorithm>
 #include <random>
-#include <iostream> // For debugging
 
 #include "nonna.h"
 
 using namespace std;
 
 struct centrino {
+    float mean;
     float median;
     vector<int> to;
 
-    explicit centrino(float med = 0) : median(med), to({}) {}
+    explicit centrino(float mn = 0) : mean(mn), to({}) {}
 };
 
 vector<centrino> c;
 ofstream out ("output.txt");
+
+// mean
+bool compareByMean (const int &a, const int &b) {
+    return c[a].mean < c[b].mean;
+}
 
 // Median calculation function
 float calculateMedian(vector<int>& values) {
@@ -31,8 +39,8 @@ float calculateMedian(vector<int>& values) {
     }
 }
 
-// Median comparison function
-bool compareByMedian(const int &a, const int &b) {
+// median
+bool compareByMedian (const int &a, const int &b) {
     return c[a].median < c[b].median;
 }
 
@@ -92,10 +100,15 @@ int main() {
         // normalize
         tempB -= C;
         c[tempA].to.push_back(tempB);
+        c[tempA].mean += (float)tempB;
     }
 
     for (int i = 0; i < C; ++i) {
         order[i] = i;
+
+        sort(c[i].to.begin(), c[i].to.end());
+
+        c[i].mean /= (float) c[i].to.size();
 
         c[i].median = calculateMedian(c[i].to);
     }
@@ -104,14 +117,24 @@ int main() {
     int minSoFar = count(order, G);
     printout(minSoFar, order);
 
-    // median heuristic
-    sort(order.begin(), order.end(), compareByMedian);
+    // mean heuristic
+    sort(order.begin(), order.end(), compareByMean);
 
     int actual = count(order, G);
     if (minSoFar > actual) {
         minSoFar = actual;
         printout(minSoFar, order);
     }
+
+    // median euristic
+    sort(order.begin(), order.end(), compareByMedian);
+
+    actual = count(order, G);
+    if (minSoFar > actual) {
+        minSoFar = actual;
+        printout(minSoFar, order);
+    } else
+        sort(order.begin(), order.end(), compareByMean);
 
     // random generator
     random_device rd;
