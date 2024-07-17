@@ -21,3 +21,11 @@ this was a project to put into practice what we learned in the Algorithms and da
 - Mean
 - Median
 - Range limit for random swaps
+
+## What we could have done better?
+
+we found that the brute force was lacking and that some improving could be done:
+
+knowing that by swapping two Gs the crossings are modified only between them leaving all the others untouched, we could have mantained the fenwick tree in memory to perform smaller calculations in the bruteforce phase
+
+another possible approach is to do swaps between G that are adjacent making the cross counting a lot faster
